@@ -28,10 +28,17 @@ handler: (req,res, next) => {
 app.use(limiter);
 
 app.use((req, res, next) => {
+  const apiKey = req.headers['x-api-key']; 
+  if (!apiKey || apiKey !== process.env.API_KEY) { 
+    console.log(`Unauthorized access attempt from IP: ${req.ip} at ${new Date().toISOString()}`);
+    return res.status(401).json({ error: 'Unauthorized: Invalid API key' }); 
+  }
+  next();
+});
+
+app.use((req, res, next) => {
   const currentDate = new Date().toISOString();
   const ip = req.ip;
-
-  // Log each request's IP address and timestamp
   console.log(`Request from IP: ${ip} at ${currentDate} - Rate Limit Remaining: ${res.get('X-RateLimit-Remaining')}`);
   next();
 });
@@ -65,7 +72,6 @@ app.get('/weather', async(req, res) => {
       } catch (error) {
 
         if (error.response) {
-          // If the request was made and the server responded with a status code that falls out of the range of 2xx
           if (error.response.status === 404) {
             res.status(404).json({ error: 'City not found. Please check the city name and try again.' });
           } else {
@@ -73,11 +79,9 @@ app.get('/weather', async(req, res) => {
             res.status(error.response.status).json({ error: error.response.data.message });
           }
         } else if (error.request) {
-          // If the request was made but no response was received
           console.error('Error: No response received from the API');
           res.status(503).json({ error: 'No response received from the API. Please try again later.' });
         } else {
-          // If something happened in setting up the request that triggered an Error
           console.error('Error: ', error.message);
           res.status(500).json({ error: 'An unexpected error occurred.' });
         }
