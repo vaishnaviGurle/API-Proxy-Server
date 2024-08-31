@@ -1,3 +1,5 @@
 ::1 - - [31/Aug/2024:14:53:28 +0000] "GET /weather HTTP/1.1" 400 34 "-" "curl/8.4.0"
 ::1 - - [31/Aug/2024:14:54:36 +0000] "GET /weather?city=London HTTP/1.1" - - "-" "curl/8.4.0"
 ::1 - - [31/Aug/2024:14:54:47 +0000] "GET /weather?city=London HTTP/1.1" 200 509 "-" "curl/8.4.0"
+::1 - - [31/Aug/2024:15:11:16 +0000] "GET /weather?city=London HTTP/1.1" 200 508 "-" "curl/8.4.0"
+::1 - - [31/Aug/2024:15:25:13 +0000] "GET / HTTP/1.1" 404 139 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
