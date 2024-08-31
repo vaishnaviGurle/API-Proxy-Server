@@ -44,8 +44,16 @@ app.get('/weather', async(req, res) => {
         
         res.json(response.data);
       } catch (error) {
-        console.error('Error fetching data from OpenWeatherMap API:', error.message);  // Log error
-        res.status(500).json({ error: 'Failed to fetch data from OpenWeatherMap API' });  // Send error response
+        if(error.response){
+          console.error('Error: ${error.response.status} - ${ error.response.data.message}');
+          res.status(error.response.status).json({error: error.response.data.message});
+        } else if (error.request){
+          console.error('Error: No response received from the API');
+          res.status(503).json({ error: 'No response received from the API. Please try again later.' });
+        } else {
+          console.error('Error: ', error.message);
+          res.status(500).json({ error: 'An unexpected error occurred.' });
+        }
       }
 });
 
