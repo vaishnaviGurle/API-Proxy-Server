@@ -1,0 +1,3 @@
+::1 - - [31/Aug/2024:14:53:28 +0000] "GET /weather HTTP/1.1" 400 34 "-" "curl/8.4.0"
+::1 - - [31/Aug/2024:14:54:36 +0000] "GET /weather?city=London HTTP/1.1" - - "-" "curl/8.4.0"
+::1 - - [31/Aug/2024:14:54:47 +0000] "GET /weather?city=London HTTP/1.1" 200 509 "-" "curl/8.4.0"
