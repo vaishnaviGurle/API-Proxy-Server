@@ -2,8 +2,11 @@ require('dotenv').config();
 const express = require ('express');
 const axios = require('axios');
 const rateLimit = require('express-rate-limit');
+const NodeCache = require('node-cache');
 
 const app = express();
+const cache = new NodeCache({stdTTL: 300});
+
 
 const limiter = rateLimit({
 windowMs: 1 * 60 * 1000,
@@ -20,6 +23,12 @@ app.get('/weather', async(req, res) => {
         return res.status(400).json({ error: 'require city parameter'});
     }
 
+    const cacheKey = city.toLowerCase();
+    if(cache.has(cacheKey)){
+      console.log('Server from cache');
+      return res.json(cache.get(cacheKey));
+    }
+
     try {
         
         const response = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
@@ -29,6 +38,8 @@ app.get('/weather', async(req, res) => {
             units: 'metric',  
           },
         });
+
+        cache.set(cacheKey, response.data);
     
         
         res.json(response.data);
