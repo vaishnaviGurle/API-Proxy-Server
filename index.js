@@ -6,7 +6,13 @@ const NodeCache = require('node-cache');
 const morgan = require('morgan');
 
 const app = express();
-const cache = new NodeCache({stdTTL: 300});
+
+const RATE_LIMIT_WINDOW = parseInt(process.env.RATE_LIMIT_WINDOW) || 1; 
+const RATE_LIMIT_MAX = parseInt(process.env.RATE_LIMIT_MAX) || 5; 
+const CACHE_DURATION = parseInt(process.env.CACHE_DURATION) || 300;
+
+
+const cache = new NodeCache({stdTTL: CACHE_DURATION});
 const fs = require('fs');
 const path = require('path');
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'),{ flags: 'a'});
@@ -15,8 +21,8 @@ app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:htt
 
 
 const limiter = rateLimit({
-windowMs: 1 * 60 * 1000,
-max: 5,
+windowMs: RATE_LIMIT_WINDOW * 60 * 1000,
+max: RATE_LIMIT_MAX,
 message: "Too many requests, please try again later.",
 statusCode: 429,
 handler: (req,res, next) => {
